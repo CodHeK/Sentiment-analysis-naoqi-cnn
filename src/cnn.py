@@ -37,12 +37,12 @@ emotion_target_size = emotion_classifier.input_shape[1:3]
 emotion_window = []
 
 # starting video streaming
-camProxy = ALProxy("ALVideoDevice", "127.0.0.1", 51421)
+camProxy = ALProxy("ALVideoDevice", "127.0.0.1", 49626)
 cameraIndex = 0
 resolution = vision_definitions.kVGA
 colorSpace = vision_definitions.kRGBColorSpace
 resolution = 2
-colorSpace =3
+colorSpace = 3
 cv2.namedWindow('window_frame')
 video_capture = cv2.VideoCapture(0)
 if video_capture.isOpened():
@@ -50,20 +50,17 @@ if video_capture.isOpened():
 else:
  rval = False
 while True:
-    bgr_image = video_capture.read()[1]
-    gray_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2GRAY)
-    rgb_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
-    faces = detect_faces(face_detection, gray_image)
     rval, frame = video_capture.read()
-    frame=cv2.resize(frame, (640, 480))
+    gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    faces = detect_faces(face_detection, gray_image)
+    frame = cv2.resize(frame, (640, 480))
     key = cv2.waitKey(1)
-    time.sleep(0.15)
     b,g,r = cv2.split(frame) # get b,g,r
     rgb_img = cv2.merge([r,g,b]) # switch it to rgb
-    set=camProxy.putImage(0,640,480,rgb_img.tobytes())
+    set = camProxy.putImage(0,640,480,rgb_img.tobytes())
 
     for face_coordinates in faces:
-
         x1, x2, y1, y2 = apply_offsets(face_coordinates, emotion_offsets)
         gray_face = gray_image[y1:y2, x1:x2]
         try:
@@ -87,28 +84,26 @@ while True:
         except:
             continue
 
-        if emotion_text == 'angry':
+        if emotion_mode == 'angry':
             color = emotion_probability * np.asarray((255, 0, 0))
-            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 51421)
+            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 49626)
             tts.say("Why u so angry?")
-        elif emotion_text == 'sad':
+        elif emotion_mode == 'sad':
             color = emotion_probability * np.asarray((0, 0, 255))
-            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 51421)
-            tts.say("Sad Slut")
-        elif emotion_text == 'fear':
+            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 49626)
+            tts.say("You seem sad.")
+        elif emotion_mode == 'fear':
             color = emotion_probability * np.asarray((0, 0, 255))
-            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 51421)
+            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 49626)
             tts.say("Get me out of here!!")
-        elif emotion_text == 'happy':
+        elif emotion_mode == 'happy':
             color = emotion_probability * np.asarray((255, 255, 0))
-            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 51421)
+            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 49626)
             tts.say("Good to see you happy!")
-            print("Happy")
-        elif emotion_text == 'surprise':
+        elif emotion_mode == 'surprise':
             color = emotion_probability * np.asarray((0, 255, 255))
-            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 51421)
+            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 49626)
             tts.say("Surprised ?")
-            print("Surprised")
         else:
             color = emotion_probability * np.asarray((0, 255, 0))
 
@@ -119,7 +114,7 @@ while True:
         draw_text(face_coordinates, rgb_image, emotion_mode,
                   color, 0, -45, 1, 1)
 
-    bgr_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR)
-    cv2.imshow('window_frame', bgr_image)
+    frame = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR)
+    cv2.imshow('window_frame', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
