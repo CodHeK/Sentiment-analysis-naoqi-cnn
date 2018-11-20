@@ -35,9 +35,10 @@ emotion_target_size = emotion_classifier.input_shape[1:3]
 
 # starting lists for calculating modes
 emotion_window = []
+emotion_window1 = []
 
 # starting video streaming
-camProxy = ALProxy("ALVideoDevice", "127.0.0.1", 49626)
+camProxy = ALProxy("ALVideoDevice", "127.0.0.1", 55955)
 cameraIndex = 0
 resolution = vision_definitions.kVGA
 colorSpace = vision_definitions.kRGBColorSpace
@@ -68,6 +69,7 @@ while True:
         except:
             continue
 
+
         gray_face = preprocess_input(gray_face, True)
         gray_face = np.expand_dims(gray_face, 0)
         gray_face = np.expand_dims(gray_face, -1)
@@ -86,24 +88,28 @@ while True:
 
         if emotion_mode == 'angry':
             color = emotion_probability * np.asarray((255, 0, 0))
-            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 49626)
+            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 55955)
             tts.say("Why u so angry?")
         elif emotion_mode == 'sad':
             color = emotion_probability * np.asarray((0, 0, 255))
-            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 49626)
+            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 55955)
             tts.say("You seem sad.")
         elif emotion_mode == 'fear':
             color = emotion_probability * np.asarray((0, 0, 255))
-            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 49626)
+            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 55955)
             tts.say("Get me out of here!!")
         elif emotion_mode == 'happy':
             color = emotion_probability * np.asarray((255, 255, 0))
-            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 49626)
+            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 55955)
             tts.say("Good to see you happy!")
         elif emotion_mode == 'surprise':
             color = emotion_probability * np.asarray((0, 255, 255))
-            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 49626)
+            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 55955)
             tts.say("Surprised ?")
+        elif emotion_mode == 'disgust':
+            color = emotion_probability * np.asarray((0, 255, 255))
+            tts = ALProxy("ALTextToSpeech", "127.0.0.1", 55955)
+            tts.say("Why you disgusted?")
         else:
             color = emotion_probability * np.asarray((0, 255, 0))
 
